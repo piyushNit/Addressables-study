@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AddressablesExample\AddressablesExternalLoad.cs" />
+    <Compile Include="Assets\AddressablesExample\AddressableUIDownload.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

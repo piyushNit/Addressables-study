@@ -27,6 +27,9 @@ public class AddressablesExternalLoad : MonoBehaviour
 
     public string assetKey = "OldPlanePrefab";
 
+    [HideInInspector]
+    public bool initsuccess;
+
     void Start()
     {
         initAddressables();
@@ -41,26 +44,29 @@ public class AddressablesExternalLoad : MonoBehaviour
     private void initDone(AsyncOperationHandle<IResourceLocator> obj)
     {
         Debug.Log("Initialization Complete ==> " + obj.Status);
-        if (obj.Status == AsyncOperationStatus.Succeeded)
+        initsuccess = obj.Status == AsyncOperationStatus.Succeeded;
+        if (initsuccess)
         {
-            loadCatalog();
+#if false
+            string catalogPath = GetCatalogPath(platform, assetVersion);
+            loadCatalog(catalogPath);
+#endif
         }
     }
 
-    string GetCatalogPath()
+    public string GetCatalogPath(Platform _Platform, AssetVersion _ver)
     {
         string catalogPath = "https://storage.googleapis.com/petpilot_addressables/";
-        catalogPath += assetVersion == AssetVersion.Ver_1 ? "petpilot_v1/ServerData/" : "petpilot_v2/ServerData/";
+        catalogPath += _ver == AssetVersion.Ver_1 ? "petpilot_v1/ServerData/" : "petpilot_v2/ServerData/";
 
-        catalogPath += platform == Platform.Windows ? "StandaloneWindows64/" : "Android/";
-        catalogPath += assetVersion == AssetVersion.Ver_1 ? "catalog_1.0.json" : "catalog_2.0.json";
+        catalogPath += _Platform == Platform.Windows ? "StandaloneWindows64/" : "Android/";
+        catalogPath += _ver == AssetVersion.Ver_1 ? "catalog_1.0.json" : "catalog_2.0.json";
 
         return catalogPath;
     }
 
-    void loadCatalog()
+    public void loadCatalog(string catalogPath)
     {
-        string catalogPath = GetCatalogPath();
         Debug.Log("loadCatalog: " + catalogPath);
         AsyncOperationHandle<IResourceLocator> handle = Addressables.LoadContentCatalogAsync(catalogPath);
         handle.Completed += loadCatalogsCompleted;
